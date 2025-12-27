@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadra.Shared", "Nadra.Shared\Nadra.Shared.csproj", "{E479C094-21B0-4C7F-83A8-6F3E78652853}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadra.Infrastructure", "Nadra.Infrastructure\Nadra.Infrastructure.csproj", "{2FE18ED1-7854-4C10-A549-D201BBB8FC26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadra.Picker.Worker", "Nadra.Picker.Worker\Nadra.Picker.Worker.csproj", "{31FCC92A-2F19-4182-B1A9-94A7129A7246}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadra.Enrichment.Worker", "Nadra.Enrichment.Worker\Nadra.Enrichment.Worker.csproj", "{6F782FBB-399A-4814-8FC6-3D9B16360061}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nadra.Dispatcher.Worker", "Nadra.Dispatcher.Worker\Nadra.Dispatcher.Worker.csproj", "{F09BC5CD-DF64-479E-AE08-08DB9BA35E62}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E479C094-21B0-4C7F-83A8-6F3E78652853}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E479C094-21B0-4C7F-83A8-6F3E78652853}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E479C094-21B0-4C7F-83A8-6F3E78652853}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E479C094-21B0-4C7F-83A8-6F3E78652853}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FE18ED1-7854-4C10-A549-D201BBB8FC26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FE18ED1-7854-4C10-A549-D201BBB8FC26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FE18ED1-7854-4C10-A549-D201BBB8FC26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FE18ED1-7854-4C10-A549-D201BBB8FC26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31FCC92A-2F19-4182-B1A9-94A7129A7246}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31FCC92A-2F19-4182-B1A9-94A7129A7246}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31FCC92A-2F19-4182-B1A9-94A7129A7246}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31FCC92A-2F19-4182-B1A9-94A7129A7246}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F782FBB-399A-4814-8FC6-3D9B16360061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F782FBB-399A-4814-8FC6-3D9B16360061}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F782FBB-399A-4814-8FC6-3D9B16360061}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F782FBB-399A-4814-8FC6-3D9B16360061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F09BC5CD-DF64-479E-AE08-08DB9BA35E62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F09BC5CD-DF64-479E-AE08-08DB9BA35E62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F09BC5CD-DF64-479E-AE08-08DB9BA35E62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F09BC5CD-DF64-479E-AE08-08DB9BA35E62}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {73280BB9-BA57-4222-A288-8AB578D57479}
+	EndGlobalSection
+EndGlobal

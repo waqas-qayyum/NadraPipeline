@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-Nadra.Dispatcher.Worker-76a148cf-2bdc-44ea-afba-81bed2e5e6fc</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nadra.Infrastructure\Nadra.Infrastructure.csproj" />
+    <ProjectReference Include="..\Nadra.Shared\Nadra.Shared.csproj" />
+  </ItemGroup>
+</Project>
