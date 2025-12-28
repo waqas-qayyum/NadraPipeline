@@ -12,9 +12,11 @@ namespace Nadra.Dispatcher.Worker.Repositories
     {
         private readonly string _connectionString;
 
-        public TrackerRepository(string connectionString)
+        public TrackerRepository(IConfiguration configuration)
         {
-            _connectionString = connectionString;
+            _connectionString = configuration.GetConnectionString("DbssDbProd")
+                ?? throw new InvalidOperationException(
+                    "Connection string 'DbssDbProd' not found");
         }
 
         public async Task<IEnumerable<(string Uid, string Payload, int Attempts)>>

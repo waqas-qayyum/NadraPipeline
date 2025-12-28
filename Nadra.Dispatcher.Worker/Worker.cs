@@ -4,36 +4,54 @@ using Nadra.Dispatcher.Worker.Services;
 
 namespace Nadra.Dispatcher.Worker
 {
-    public class Worker : BackgroundService
+    public sealed class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly DispatchCoordinator _coordinator;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly DispatcherOptions _options;
 
-        public Worker(ILogger<Worker> logger,
-                      DispatchCoordinator coordinator,
-                      IOptions<DispatcherOptions> options)
+        public Worker(
+            ILogger<Worker> logger,
+            IServiceScopeFactory scopeFactory,
+            IOptions<DispatcherOptions> options)
         {
             _logger = logger;
-            _coordinator = coordinator;
+            _scopeFactory = scopeFactory;
             _options = options.Value;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(
+            CancellationToken stoppingToken)
         {
+            _logger.LogInformation("Nadra Dispatcher Worker started");
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                if (_logger.IsEnabled(LogLevel.Information))
+                try
                 {
-                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                    using var scope = _scopeFactory.CreateScope();
+
+                    var coordinator =
+                        scope.ServiceProvider
+                             .GetRequiredService<DispatchCoordinator>();
+
+                    await coordinator.DispatchAsync(stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    // Normal shutdown
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                        "Unhandled exception in dispatcher loop");
                 }
 
-                await _coordinator.DispatchAsync(stoppingToken);
                 await Task.Delay(
                     _options.PollDelayMs,
                     stoppingToken);
-                
             }
         }
     }
+
 }

@@ -1,10 +1,11 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MySqlConnector;
+
 
 namespace Nadra.Enrichment.Worker.Repositories
 {
@@ -50,14 +51,14 @@ namespace Nadra.Enrichment.Worker.Repositories
                                         bv_timestamp DESC,
                                         transaction_id DESC
                                 ) AS rn
-                            FROM dbo.BIOMETRIC_NADRATRANSACTION_NEW
+                            FROM biometric_nadratransaction
                             WHERE bv_status = 'verified'
                               AND msisdn = @Msisdn
                         ) t
                         WHERE rn = 1;
         ";
 
-            using var conn = new SqlConnection(_connectionString);
+            using var conn = new MySqlConnection(_connectionString);
             return await conn.QuerySingleOrDefaultAsync(
                 sql, new { Msisdn = msisdn });
         }

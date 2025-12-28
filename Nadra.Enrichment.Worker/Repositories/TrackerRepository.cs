@@ -25,7 +25,7 @@ namespace Nadra.Enrichment.Worker.Repositories
         SELECT TOP (@BatchSize)
             UID,
             MSISDN,
-            ORDER_TYPE
+            ORDER_TYPE  AS OrderType
         FROM dbo.NADRA_PROCESSING_TRACKER
         WHERE STATUS = 'PICKED'
         ORDER BY PICKED_AT;

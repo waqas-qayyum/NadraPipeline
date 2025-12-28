@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,13 @@ namespace Nadra.Dispatcher.Worker.Repositories
     {
         private readonly string _connectionString;
 
-        public AuditRepository(string connectionString)
+        public AuditRepository(IConfiguration configuration)
         {
-            _connectionString = connectionString;
+            _connectionString = configuration.GetConnectionString("DbssDbProd")
+                ?? throw new InvalidOperationException(
+                    "Connection string 'DbssDbProd' not found");
         }
+
 
         public async Task InsertAsync(
             string uid,

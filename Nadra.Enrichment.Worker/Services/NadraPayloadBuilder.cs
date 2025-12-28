@@ -11,11 +11,14 @@ namespace Nadra.Enrichment.Worker.Services
     public sealed class NadraPayloadBuilder
     {
         public string Build(
-            string uid,
-            string msisdn,
-            string orderType,
-            dynamic citizen)
+                            string uid,
+                            string msisdn,
+                            int orderType,
+                            dynamic citizen)
         {
+            // Normalize MSISDN: 92xxxxxxxxxx → 03xxxxxxxxx
+            string normalizedMsisdn = "0" + msisdn.Substring(2);
+
             var payload = new NadraRequest
             {
                 Data = new NadraData
@@ -25,12 +28,11 @@ namespace Nadra.Enrichment.Worker.Services
                         Category = 1,
                         CitizenNumber = citizen.id_number,
                         CitizenType = citizen.id_type,
-                        Msisdn = msisdn,
+                        Msisdn = normalizedMsisdn,
                         RequestId = long.Parse(citizen.request_id),
-                        SaleType = citizen.SALE_TYPE,
+                        SaleType = MapSaleType(orderType),
                         SessionId = citizen.session_id,
                         TransactionId = citizen.transaction_id,
-                        // citizen.bv_timestamp
                         ActivationDate = DateTime.Now.ToString("yyyy-MM-dd")
                     }
                 }
@@ -38,5 +40,29 @@ namespace Nadra.Enrichment.Worker.Services
 
             return JsonSerializer.Serialize(payload);
         }
+
+        private static int MapSaleType(int? orderType)
+        {
+            if (!orderType.HasValue)
+            {
+                return 1; // Default → New SIM
+            }
+
+            return orderType.Value switch
+            {
+                0 => 1, // New SIM / MNP
+                10 => 3, // Change SIM / Duplicate SIM
+                15 => 2, // Change Owner
+                24 => 5, // Re-Verification
+                29 => 6, // Disown
+                _ =>  1 // Fallback → New SIM
+            };
+        }
+
+
+
+
+
+
     }
 }

@@ -57,7 +57,7 @@ namespace Nadra.Enrichment.Worker
                         var payload = _builder.Build(
                             record.UID,
                             record.MSISDN,
-                            record.OrderType,
+                            Convert.ToInt32(record.OrderType),
                             citizen);
 
                         await _tracker.MarkEnrichedAsync(
@@ -74,7 +74,7 @@ namespace Nadra.Enrichment.Worker
                 {
                     _logger.LogError(ex, "Worker execution failed");
                 }
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+
             }
         }
     }

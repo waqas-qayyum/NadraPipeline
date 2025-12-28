@@ -37,7 +37,7 @@ namespace Nadra.Picker.Worker.Repositories
             SELECT TOP (@BatchSize)
                 t.UID,
                 t.MSISDN,
-                t.ORDER_TYPE
+                t.TRANSACTION_TYPE as ORDER_TYPE
             FROM dbo.DBSS_ALL_TRANSACTION_DATA t
             CROSS JOIN dbo.NADRA_PROCESSING_CONFIG c
             LEFT JOIN dbo.NADRA_PROCESSING_TRACKER p
