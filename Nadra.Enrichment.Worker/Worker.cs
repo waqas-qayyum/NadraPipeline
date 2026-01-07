@@ -38,10 +38,24 @@ namespace Nadra.Enrichment.Worker
             {
                 try
                 {
+                    _logger.LogInformation("Fetching PICKED records start");
+
                     var picked = await _tracker.FetchPickedAsync(
                     _options.BatchSize);
 
                     var any = false;
+
+
+                    _logger.LogInformation(
+                        "Fetched {Count} PICKED records",
+                        picked.Count());
+
+                    if (picked.Count() == 0)
+                    {
+                        _logger.LogInformation("No records found, entering idle delay");
+                        await Task.Delay(_options.PollDelayMs, stoppingToken);
+                        continue;
+                    }
 
                     foreach (var record in picked)
                     {
@@ -52,7 +66,17 @@ namespace Nadra.Enrichment.Worker
                                 record.MSISDN);
 
                         if (citizen == null)
-                            continue; // optionally mark FAILED
+                        {
+                            _logger.LogWarning(
+                                "No citizen data found for UID {Uid}, MSISDN {Msisdn}",
+                                record.UID, record.MSISDN);
+
+                            await _tracker.MarkFailedAsync(
+                                record.UID,
+                                "Citizen data not found");
+
+                            continue;
+                        }                       
 
                         var payload = _builder.Build(
                             record.UID,
@@ -60,15 +84,31 @@ namespace Nadra.Enrichment.Worker
                             Convert.ToInt32(record.OrderType),
                             citizen);
 
+                        if (string.IsNullOrWhiteSpace(payload))
+                        {
+                            _logger.LogWarning(
+                                "Failed to build payload for UID {Uid}, MSISDN {Msisdn}",
+                                record.UID, record.MSISDN);
+                            await _tracker.MarkFailedAsync(
+                                record.UID,
+                                "Failed to build payload");
+                            continue;
+                        }
+
+                        // ---- Success Path ----
                         await _tracker.MarkEnrichedAsync(
                             record.UID,
                             payload);
                     }
 
                     if (!any)
+                    {
+                        _logger.LogInformation("No record in Any");
+
                         await Task.Delay(
                             _options.PollDelayMs,
                             stoppingToken);
+                    }
                 }
                 catch (Exception ex)
                 {

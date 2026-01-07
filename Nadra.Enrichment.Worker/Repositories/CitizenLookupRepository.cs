@@ -20,7 +20,9 @@ namespace Nadra.Enrichment.Worker.Repositories
 
         public async Task<dynamic?> GetCitizenAsync(string msisdn)
         {
-            const string sql = @"
+            try
+            {
+                const string sql = @"
                         SELECT
                             session_id,
                             transaction_id,
@@ -58,9 +60,15 @@ namespace Nadra.Enrichment.Worker.Repositories
                         WHERE rn = 1;
         ";
 
-            using var conn = new MySqlConnection(_connectionString);
-            return await conn.QuerySingleOrDefaultAsync(
-                sql, new { Msisdn = msisdn });
+                using var conn = new MySqlConnection(_connectionString);
+                return await conn.QuerySingleOrDefaultAsync(
+                    sql, new { Msisdn = msisdn });
+            }
+            catch (Exception)
+            {
+                // Log exception if logging is set up
+                return null;
+            }
         }
     }
 }

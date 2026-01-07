@@ -33,30 +33,64 @@ namespace Nadra.Picker.Worker.Repositories
         public async Task<int> PickAsync(int batchSize, CancellationToken ct)
         {
             const string sql = @"
-        ;WITH CTE_PICK AS (
-            SELECT TOP (@BatchSize)
-                t.UID,
-                t.MSISDN,
-                t.TRANSACTION_TYPE as ORDER_TYPE
-            FROM dbo.DBSS_ALL_TRANSACTION_DATA t
-            CROSS JOIN dbo.NADRA_PROCESSING_CONFIG c
-            LEFT JOIN dbo.NADRA_PROCESSING_TRACKER p
-                ON p.UID = t.UID
-            WHERE
-                t.TRANSACTION_TYPE IN (0, 10, 15, 24, 29)
-                AND t.UID > c.UIC_CUT_OFF
-                AND p.UID IS NULL
-            ORDER BY t.INSERT_DATE
-        )
-        INSERT INTO dbo.NADRA_PROCESSING_TRACKER (
-            UID, MSISDN, ORDER_TYPE, STATUS
-        )
-        SELECT UID, MSISDN, ORDER_TYPE, 'PICKED'
-        FROM CTE_PICK;
-        ";
+                    ;WITH CTE_PICK AS (
+                        SELECT TOP (@BatchSize)
+                            t.UID,
+                            t.MSISDN,
+                            t.TRANSACTION_TYPE as ORDER_TYPE,
+		                    t.LAST_MODIFIED
+                        FROM dbo.DBSS_ALL_TRANSACTION_DATA t
+                        CROSS JOIN dbo.NADRA_PROCESSING_CONFIG c
+                        LEFT JOIN dbo.NADRA_PROCESSING_TRACKER p
+                            ON p.UID = t.UID
+                        WHERE
+                            t.TRANSACTION_TYPE IN (0, 10, 15, 24, 29)
+                            AND t.LAST_MODIFIED > c.START_INSERT_DATE
+                            AND p.UID IS NULL
+                            AND t.MSISDN IS NOT NULL
+	                        AND LTRIM(RTRIM(t.MSISDN)) <> ''
+                        ORDER BY t.LAST_MODIFIED
+                    )
+                    INSERT INTO dbo.NADRA_PROCESSING_TRACKER (
+                        UID, MSISDN, ORDER_TYPE, STATUS
+                    )
+                    SELECT UID, MSISDN, ORDER_TYPE, 'PICKED'
+                    FROM CTE_PICK;
+                ";
 
-            using var conn = new SqlConnection(_connectionString);
-            return await conn.ExecuteAsync(sql, new { BatchSize = batchSize });
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+
+                return await conn.ExecuteAsync(
+                    new CommandDefinition(
+                        sql,
+                        new { BatchSize = batchSize },
+                        cancellationToken: ct,
+                        commandTimeout: 120));
+            }
+            catch (OperationCanceledException)
+            {
+                // Respect shutdown — let worker exit cleanly
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                //_logger.LogError(
+                //    ex,
+                //    "Database error in PickAsync. Returning 0 picked records.");
+
+                // IMPORTANT: return 0 → worker will delay & retry
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(
+                //    ex,
+                //    "Unexpected error in PickAsync. Returning 0 picked records.");
+
+                return 0;
+            }
         }
     }
 }
