@@ -44,7 +44,7 @@ namespace Nadra.Picker.Worker.Repositories
                         LEFT JOIN dbo.NADRA_PROCESSING_TRACKER p
                             ON p.UID = t.UID
                         WHERE
-                            t.TRANSACTION_TYPE IN (0, 10, 15, 24, 29)
+                            t.TRANSACTION_TYPE IN (10)
                             AND t.LAST_MODIFIED > c.START_INSERT_DATE
                             AND p.UID IS NULL
                             AND t.MSISDN IS NOT NULL

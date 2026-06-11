@@ -41,7 +41,7 @@ namespace Nadra.Enrichment.Worker.Services
                             SaleType = MapSaleType(orderType),
                             SessionId = citizen.session_id,
                             TransactionId = citizen.transaction_id,
-                            ActivationDate = DateTime.Now.ToString("yyyy-MM-dd")
+                            ActivationDate = citizen.bv_timestamp.ToString("yyyy-MM-dd") //DateTime.Now.ToString("yyyy-MM-dd")
                         }
                     }
                 };
