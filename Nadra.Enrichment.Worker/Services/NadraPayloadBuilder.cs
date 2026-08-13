@@ -69,7 +69,10 @@ namespace Nadra.Enrichment.Worker.Services
 
             return orderType.Value switch
             {
-                0 => 1, // New SIM / MNP
+                //0 => 1, // New SIM / MNP
+                //New change when we migrated flow from table DBSS_ALL_TRANSACTION to 
+                //new table DBSS_MSISDN_REGISTER_DATA
+                0 => 4, //  MNP
                 10 => 3, // Change SIM / Duplicate SIM
                 15 => 2, // Change Owner
                 24 => 5, // Re-Verification

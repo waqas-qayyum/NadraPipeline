@@ -37,14 +37,19 @@ namespace Nadra.Picker.Worker.Repositories
                         SELECT TOP (@BatchSize)
                             t.UID,
                             t.MSISDN,
-                            t.TRANSACTION_TYPE as ORDER_TYPE,
+                            CASE
+                                WHEN REPLACE(LTRIM(RTRIM(t.ORDER_TYPE)), ' ', '') = 'ChangeSIM'
+                                    THEN 10
+                                WHEN LTRIM(RTRIM(t.ORDER_TYPE)) = 'MNP'
+                                    THEN 0
+                            END AS ORDER_TYPE,
 		                    t.LAST_MODIFIED
-                        FROM dbo.DBSS_ALL_TRANSACTION_DATA t
+                        FROM dbo.DBSS_MSISDN_REGISTER_DATA t
                         CROSS JOIN dbo.NADRA_PROCESSING_CONFIG c
                         LEFT JOIN dbo.NADRA_PROCESSING_TRACKER p
                             ON p.UID = t.UID
                         WHERE
-                            t.TRANSACTION_TYPE IN (10)
+                            t.TRANSACTION_TYPE IN (10, 0)
                             AND t.LAST_MODIFIED > c.START_INSERT_DATE
                             AND p.UID IS NULL
                             AND t.MSISDN IS NOT NULL
