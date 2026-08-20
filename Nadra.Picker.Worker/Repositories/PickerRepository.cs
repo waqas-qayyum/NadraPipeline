@@ -38,10 +38,12 @@ namespace Nadra.Picker.Worker.Repositories
                             t.UID,
                             t.MSISDN,
                             CASE
-                                WHEN REPLACE(LTRIM(RTRIM(t.ORDER_TYPE)), ' ', '') = 'ChangeSIM'
+                                WHEN UPPER(REPLACE(LTRIM(RTRIM(t.ORDER_TYPE)), ' ', '')) = 'CHANGESIM'
                                     THEN 10
-                                WHEN LTRIM(RTRIM(t.ORDER_TYPE)) = 'MNP'
+                                WHEN UPPER(LTRIM(RTRIM(t.ORDER_TYPE))) = 'MNP'
                                     THEN 0
+                                WHEN UPPER(LTRIM(RTRIM(t.ORDER_TYPE))) = 'REVERIFICATION'
+                                    THEN 5
                             END AS ORDER_TYPE,
 		                    t.LAST_MODIFIED
                         FROM dbo.DBSS_MSISDN_REGISTER_DATA t
@@ -49,7 +51,7 @@ namespace Nadra.Picker.Worker.Repositories
                         LEFT JOIN dbo.NADRA_PROCESSING_TRACKER p
                             ON p.UID = t.UID
                         WHERE
-                            t.TRANSACTION_TYPE IN (10, 0)
+                            t.TRANSACTION_TYPE IN (10, 0, 5)
                             AND t.LAST_MODIFIED > c.START_INSERT_DATE
                             AND p.UID IS NULL
                             AND t.MSISDN IS NOT NULL

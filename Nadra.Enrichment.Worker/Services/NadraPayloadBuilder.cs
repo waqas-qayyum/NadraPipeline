@@ -76,6 +76,7 @@ namespace Nadra.Enrichment.Worker.Services
                 10 => 3, // Change SIM / Duplicate SIM
                 15 => 2, // Change Owner
                 24 => 5, // Re-Verification
+                5 => 5, // Re-Verification
                 29 => 6, // Disown
                 _ =>  1 // Fallback → New SIM
             };
